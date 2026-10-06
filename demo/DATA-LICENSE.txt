@@ -1,0 +1,19 @@
+Volve data - licence and attribution
+====================================
+
+This folder contains data derived from the Equinor Volve dataset (WITSML real-time drilling data),
+converted by DrillDash (unit conversion to SI, merged drilling channels, rig states, connection times).
+
+Data publisher: Equinor ASA
+Data owners: Equinor (operator), ExxonMobil (partner), Bayerngas (partner) and the Norwegian Petroleum Directorate
+Source: https://www.equinor.com/energy/volve-data-sharing
+
+Licence: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+The data shall not be resold. If shared, the data owners shall be attributed. Adaptations must be shared
+under the same licence.
+
+The data is provided "as is" and may contain errors and omissions; Equinor and the former Volve licence
+partners give no warranties and accept no liability for its use (see Equinor's licence for the full text).
+
+Note: the DrillDash source code is MIT-licensed; this licence applies to the data only.

@@ -1,0 +1,14 @@
+# generated data store (rebuilt by ingest.py, ~2.7 GB) and raw input data
+/store/
+/data/
+*.log
+
+# Python / OS / editor clutter
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+/dist/
