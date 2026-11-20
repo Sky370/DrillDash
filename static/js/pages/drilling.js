@@ -6,7 +6,7 @@ import { makeVOverview, paintStates } from '../charts.js';
 import { TrackPanel, attachResizer } from '../tracks.js';
 import { openTrackEditor } from '../trackEditor.js';
 import { sidePanel } from '../side.js';
-import { TIME_LAYOUTS, resolveLayout, openLayoutMenu } from '../layouts.js';
+import { TIME_LAYOUTS, DEFAULT_TIME_LAYOUT, resolveLayout, openLayoutMenu } from '../layouts.js';
 
 const HELP = `Zoom & pan
 • Drag up/down on a track: zoom time
@@ -181,8 +181,12 @@ export async function mount(main, ctx) {
   // suggested layouts adapt to the logs of each wellbore; a customised layout is kept as-is
   const stdSrc = { id: 'drilling', channels: new Set(D.available) };
   const resolveL = L => resolveLayout(L, stdSrc, timeLogs.filter(l => l.rows > 1));
-  const activeL = TIME_LAYOUTS.find(L => L.id === (S.activeLayout || {}).time);
-  const tracks = activeL ? resolveL(activeL).tracks : S.tracks && S.tracks.length ? S.tracks : DEFAULT_TRACKS;
+  const defL = TIME_LAYOUTS.find(L => L.id === DEFAULT_TIME_LAYOUT);
+  const defTracks = (() => { const t = resolveL(defL).tracks; return t.length ? t : DEFAULT_TRACKS; })();
+  // first visit (no saved tracks, no layout picked yet) opens on the default layout
+  const firstVisit = (S.activeLayout || {}).time === undefined && !(S.tracks && S.tracks.length);
+  const activeL = firstVisit ? defL : TIME_LAYOUTS.find(L => L.id === (S.activeLayout || {}).time);
+  const tracks = activeL ? resolveL(activeL).tracks : S.tracks && S.tracks.length ? S.tracks : defTracks;
   const customised = () => { S.activeLayout = { ...(S.activeLayout || {}), time: null }; };
   function layoutMenu(anchor) {
     openLayoutMenu(anchor, { kind: 'time', layouts: TIME_LAYOUTS, resolve: resolveL, current: () => panel.cfg.tracks,
@@ -375,7 +379,7 @@ export async function mount(main, ctx) {
     const sources = [{ id: 'drilling', name: 'Drilling (standard)', channels: D.available.map(c => ({ mnem: c, unit: CANON[c]?.u, desc: CANON[c]?.label })) },
       ...timeLogs.filter(l => l.rows > 1).sort((a, b) => a.name.localeCompare(b.name)).map(l => ({ id: l.gid, name: l.name, channels: l.channels }))];
     openTrackEditor({
-      sources, tracks: panel.cfg.tracks, defaults: DEFAULT_TRACKS, unitOf, target,
+      sources, tracks: panel.cfg.tracks, defaults: defTracks, unitOf, target,
       onSave: t => { S.tracks = t; customised(); save(); panel.build(t); },
     });
   }
